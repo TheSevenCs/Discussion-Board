@@ -97,7 +97,7 @@ void MainMenu::sendPost(std::string author, std::string topic, std::string conte
 	sendMessage(post);
 }
 
-std::vector<std::string> MainMenu::getPosts(std::string author, std::string topic) {
+std::vector<std::string> MainMenu::receivePosts(std::string author, std::string topic) {
     // Send get posts request
     sendMessage("|REQFLTRD|" + author + "|" + topic);
 

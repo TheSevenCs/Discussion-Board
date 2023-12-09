@@ -20,7 +20,7 @@ public:
 
     void sendPost(std::string author, std::string topic, std::string content);
 
-    std::vector<std::string> getPosts(std::string author, std::string topic);
+    std::vector<std::string> receivePosts(std::string author, std::string topic);
     
 
 private:
