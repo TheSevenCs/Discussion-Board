@@ -11,7 +11,8 @@ void MainMenu::displayMenu() {
         std::cout << "=== Main Menu ===" << std::endl;
         std::cout << "1. Login" << std::endl;
         std::cout << "2. Create a New Account" << std::endl;
-        std::cout << "3. Exit" << std::endl;
+        std::cout << "3. Make a post" << std::endl;
+        std::cout << "4. Exit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -23,6 +24,16 @@ void MainMenu::displayMenu() {
             createAccount();
             break;
         case 3:
+std::string author, topic, content;
+			std::cout << "Enter the author: ";
+			std::cin >> author;
+			std::cout << "Enter the topic: ";
+			std::cin >> topic;
+			std::cout << "Enter the content: ";
+			std::cin >> content;
+			sendPost(author, topic, content);
+			break;
+        case 4:
             std::cout << "Exiting the program. Goodbye!" << std::endl;
             break;
         default:
