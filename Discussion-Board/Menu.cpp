@@ -6,14 +6,17 @@ MainMenu::MainMenu(SOCKET ClientSocket) {
 
 void MainMenu::displayMenu() {
     int choice;
+    bool isQuit = false;
     std::string author, topic, content; 
+    std::vector<std::string> posts;
 
     do {
         std::cout << "=== Main Menu ===" << std::endl;
         std::cout << "1. Login" << std::endl;
         std::cout << "2. Create a New Account" << std::endl;
         std::cout << "3. Make a post" << std::endl;
-        std::cout << "4. Exit" << std::endl;
+        std::cout << "4. View posts" << std::endl;
+        std::cout << "5. Exit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -34,13 +37,26 @@ void MainMenu::displayMenu() {
 			sendPost(author, topic, content);
 			break;
         case 4:
+			std::cout << "Enter the author: ";
+			std::cin >> author;
+			std::cout << "Enter the topic: ";
+			std::cin >> topic;
+            // get posts
+			posts = receivePosts(author, topic);
+            // display posts
+            for (int i = 0; i < posts.size(); i++) {
+				std::cout << posts[i] << std::endl;
+			}
+			break;
+        case 5:
             std::cout << "Exiting the program. Goodbye!" << std::endl;
+            isQuit = true;
             break;
         default:
             std::cout << "Invalid choice. Please try again." << std::endl;
             break;
         }
-    } while (choice != 4);
+    } while (isQuit == false);
 }
 
 void MainMenu::sendMessage(const std::string& message) {
