@@ -6,7 +6,7 @@ MainMenu::MainMenu(SOCKET ClientSocket) {
 
 void MainMenu::displayMenu() {
     int choice;
-    std::string author, topic, content;
+    std::string author, topic, content; 
 
     do {
         std::cout << "=== Main Menu ===" << std::endl;
@@ -38,8 +38,9 @@ void MainMenu::displayMenu() {
             break;
         default:
             std::cout << "Invalid choice. Please try again." << std::endl;
+            break;
         }
-    } while (choice != 3);
+    } while (choice != 4);
 }
 
 void MainMenu::sendMessage(const std::string& message) {
