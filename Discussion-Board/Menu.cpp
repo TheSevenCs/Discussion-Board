@@ -1,4 +1,6 @@
 #include "Menu.h"
+#include <iostream>
+#include <string>
 
 MainMenu::MainMenu(SOCKET ClientSocket) {
     this->ClientSocket = ClientSocket;
@@ -19,7 +21,7 @@ void MainMenu::displayMenu() {
         std::cout << "5. Exit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
-
+        
         switch (choice) {
         case 1:
             login();
@@ -28,19 +30,21 @@ void MainMenu::displayMenu() {
             createAccount();
             break;
         case 3:
+            std::cin.ignore();
 			std::cout << "Enter the author: ";
-			std::cin >> author;
+			std::getline(std::cin, author);
 			std::cout << "Enter the topic: ";
-			std::cin >> topic;
+            std::getline(std::cin, topic);
 			std::cout << "Enter the content: ";
-			std::cin >> content;
+            std::getline(std::cin, content);
 			sendPost(author, topic, content);
 			break;
         case 4:
+            std::cin.ignore();
 			std::cout << "Enter the author: ";
-			std::cin >> author;
+            std::getline(std::cin, author);
 			std::cout << "Enter the topic: ";
-			std::cin >> topic;
+            std::getline(std::cin, topic);
             // get posts
 			posts = receivePosts(author, topic);
             // display posts
@@ -53,6 +57,7 @@ void MainMenu::displayMenu() {
             isQuit = true;
             break;
         default:
+            choice = 0;
             std::cout << "Invalid choice. Please try again." << std::endl;
             break;
         }
