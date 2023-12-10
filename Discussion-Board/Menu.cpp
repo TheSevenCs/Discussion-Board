@@ -57,8 +57,9 @@ void MainMenu::displayMenu() {
             isQuit = true;
             break;
         default:
-            choice = 0;
-            std::cout << "Invalid choice. Please try again." << std::endl;
+            std::cin.ignore();
+            std::cout << "Invalid choice. Exiting." << std::endl;
+            isQuit = true;
             break;
         }
     } while (isQuit == false);
