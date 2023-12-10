@@ -6,6 +6,7 @@ MainMenu::MainMenu(SOCKET ClientSocket) {
 
 void MainMenu::displayMenu() {
     int choice;
+    std::string author, topic, content;
 
     do {
         std::cout << "=== Main Menu ===" << std::endl;
@@ -24,7 +25,6 @@ void MainMenu::displayMenu() {
             createAccount();
             break;
         case 3:
-std::string author, topic, content;
 			std::cout << "Enter the author: ";
 			std::cin >> author;
 			std::cout << "Enter the topic: ";
