@@ -83,40 +83,56 @@ void handleLoginRequest(SOCKET clientSocket, const std::string& request) {
 void handleRequestFilter(SOCKET clientSocket, const std::string& request)
 {
     std::istringstream iss(request);
-    std::string command, filterBy, filterValue;
+    std::string command, authorFilter, topicFilter;
 
     std::getline(iss, command, '|'); // Extract the command part
     std::getline(iss, command, '|');
-    std::getline(iss, filterBy, '|');    // Extract the filter type (Author/Topic)
-    std::getline(iss, filterValue, '|'); // Extract the filter value
-    std::cout << command << filterBy << filterValue << std::endl;
-        std::vector<std::string> filteredPosts;
-    if (command == "REQFLTRD"){
+    std::getline(iss, authorFilter, '|');    // Extract the filter type (Author/Topic)
+    std::getline(iss, topicFilter, '|'); // Extract the filter value
+
+    //command = command.substr(1, command.size() - 1); // Remove the leading '|'
+    std::cout << command << std::endl;
+    std::vector<std::string> filteredPosts;
+    if (command == "REQFLTRD") {
         for (const auto& post : posts)
         {
-            if (post.author == filterValue)
-            {
+            if (authorFilter == "" && topicFilter == "") {
                 std::string postStr = post.author + "|" + post.topic + "|" + post.content;
                 filteredPosts.push_back(postStr);
+            }
+            else if (authorFilter == "" && topicFilter != "")
+            {
+                if (post.topic == topicFilter)
+                {
+                    std::string postStr = post.author + "|" + post.topic + "|" + post.content;
+                    filteredPosts.push_back(postStr);
+                }
+            }
+            else if (authorFilter != "" && topicFilter == "")
+            {
+                if (post.author == authorFilter)
+                {
+                    std::string postStr = post.author + "|" + post.topic + "|" + post.content;
+                    filteredPosts.push_back(postStr);
+                }
+            }
+            else
+            {
+                if (post.author == authorFilter && post.topic == topicFilter)
+                {
+                    std::string postStr = post.author + "|" + post.topic + "|" + post.content;
+                    filteredPosts.push_back(postStr);
+                }
             }
         }
 
-        for (const auto& post : posts)
-        {
-            if (post.topic == filterValue)
-            {
-                std::string postStr = post.author + "|" + post.topic + "|" + post.content;
-                filteredPosts.push_back(postStr);
-            }
-        }
-        
         // Combine all filtered posts into a single transmission
         std::string response;
 
         for (const auto& post : filteredPosts) {
             response += "|POST|" + post;
         }
-        std::cout << "response:" << response << std::endl;
+
         // Send the response back to the client
         send(clientSocket, response.c_str(), response.size(), 0);
     }
@@ -166,7 +182,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&client, &addrlen)) == INVALID_SOCKET)
+    if ((new_socket = accept(server_fd, (struct sockaddr*)&client, &addrlen)) == INVALID_SOCKET)
     {
         std::cerr << "Accept failed" << std::endl;
         exit(EXIT_FAILURE);
@@ -215,7 +231,7 @@ int main() {
             std::cout << "Request Filtered Detected" << std::endl;
             handleRequestFilter(new_socket, buffer);
         }
-        
+
     }
     closesocket(new_socket);
     WSACleanup();
