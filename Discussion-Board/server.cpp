@@ -93,7 +93,7 @@ void handleRequestFilter(SOCKET clientSocket, const std::string& request)
     //command = command.substr(1, command.size() - 1); // Remove the leading '|'
     std::cout << command << std::endl;
         std::vector<std::string> filteredPosts;
-
+    if (command == "REQFLTRD")
         for (const auto& post : posts)
         {
             if (post.author == filterValue)

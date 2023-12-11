@@ -79,7 +79,7 @@ std::string MainMenu::receiveMessage() {
     {
         closesocket(ClientSocket);
         WSACleanup();
-        std::cout << "ERROR: failed to receive message from client" << std::endl;
+        std::cout << "ERROR: failed to receive message from server" << std::endl;
         exit(-1);
     }
     return std::string(buffer);
