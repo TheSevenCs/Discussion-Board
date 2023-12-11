@@ -86,42 +86,35 @@ void handleRequestFilter(SOCKET clientSocket, const std::string& request)
     std::string command, filterBy, filterValue;
 
     std::getline(iss, command, '|'); // Extract the command part
-    command = command.substr(1, command.size() - 1); // Remove the leading '|'
+    std::getline(iss, command, '|');
+    std::getline(iss, filterBy, '|');    // Extract the filter type (Author/Topic)
+    std::getline(iss, filterValue, '|'); // Extract the filter value
 
-    if (command == "REQFLTRD") {
-        std::getline(iss, filterBy, '|'); // Extract the filter type (Author/Topic)
-        std::getline(iss, filterValue, '|'); // Extract the filter value
-
+    //command = command.substr(1, command.size() - 1); // Remove the leading '|'
+    std::cout << command << std::endl;
         std::vector<std::string> filteredPosts;
-        if (filterBy == "Author")
+
+        for (const auto& post : posts)
         {
-            for (const auto& post : posts)
+            if (post.author == filterValue)
             {
-                if (post.author == filterValue)
-                {
-                    std::string postStr = post.author + "|" + post.topic + "|" + post.content;
-                    filteredPosts.push_back(postStr);
-                }
+                std::string postStr = post.author + "|" + post.topic + "|" + post.content;
+                filteredPosts.push_back(postStr);
             }
-        }
-        else if (filterBy == "Topic")
-        {
-            for (const auto& post : posts)
-            {
-                if (post.topic == filterValue)
-                {
-                    std::string postStr = post.author + "|" + post.topic + "|" + post.content;
-                    filteredPosts.push_back(postStr);
-                }
-            }
-        }
-        else {
-            std::cerr << "Invalid filter type" << std::endl;
-            // Send an appropriate response indicating an invalid filter type, if needed
         }
 
+        for (const auto& post : posts)
+        {
+            if (post.topic == filterValue)
+            {
+                std::string postStr = post.author + "|" + post.topic + "|" + post.content;
+                filteredPosts.push_back(postStr);
+            }
+        }
+        
         // Combine all filtered posts into a single transmission
         std::string response;
+
         for (const auto& post : filteredPosts) {
             response += "|POST|" + post;
         }

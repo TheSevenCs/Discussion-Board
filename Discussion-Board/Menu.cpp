@@ -74,6 +74,7 @@ std::string MainMenu::receiveMessage() {
     char buffer[bufferSize];
     memset(buffer, 0, bufferSize);
     int BytesReceived = recv(ClientSocket, buffer, bufferSize, 0);
+
     if (BytesReceived == -1)
     {
         closesocket(ClientSocket);
@@ -133,8 +134,10 @@ void MainMenu::sendPost(std::string author, std::string topic, std::string conte
 
 std::vector<std::string> MainMenu::receivePosts(std::string author, std::string topic) {
     // Send get posts request
-    sendMessage("|REQFLTRD|" + author + "|" + topic);
+    std::string request = "|REQFLTRD|" + author + "|" + topic;
+    sendMessage(request);
 
+    std::cout << request << std::endl;
     // Receive posts
     std::string message = receiveMessage();
 
