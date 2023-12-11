@@ -11,6 +11,7 @@ void MainMenu::displayMenu() {
     bool isQuit = false;
     std::string author, topic, content; 
     std::vector<std::string> posts;
+    std::string message;
 
     do {
         std::cout << "=== Main Menu ===" << std::endl;
@@ -18,7 +19,8 @@ void MainMenu::displayMenu() {
         std::cout << "2. Create a New Account" << std::endl;
         std::cout << "3. Make a post" << std::endl;
         std::cout << "4. View posts" << std::endl;
-        std::cout << "5. Exit" << std::endl;
+        std::cout << "5. Send mutiple posts" << std::endl;
+        std::cout << "6. Exit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         
@@ -53,6 +55,24 @@ void MainMenu::displayMenu() {
 			}
 			break;
         case 5:
+       
+			std::cin.ignore();
+			std::cout << "How many posts would you like to send? "; 
+            std::cin >> choice;
+            for (int i = 0; i < choice; i++) {
+                std::cin.ignore();
+                std::cout << "Enter the author: ";
+                std::getline(std::cin, author);
+                std::cout << "Enter the topic: ";
+                std::getline(std::cin, topic);
+                std::cout << "Enter the content: ";
+                std::getline(std::cin, content);
+                message += "|POST|" + author + "|" + topic + "|" + content;
+            }
+            sendMessage(message);
+			break;  
+
+        case 6:
             std::cout << "Exiting the program. Goodbye!" << std::endl;
             isQuit = true;
             break;
