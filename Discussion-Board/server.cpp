@@ -89,9 +89,7 @@ void handleRequestFilter(SOCKET clientSocket, const std::string& request)
     std::getline(iss, command, '|');
     std::getline(iss, filterBy, '|');    // Extract the filter type (Author/Topic)
     std::getline(iss, filterValue, '|'); // Extract the filter value
-
-    //command = command.substr(1, command.size() - 1); // Remove the leading '|'
-    std::cout << command << std::endl;
+    std::cout << command << filterBy << filterValue << std::endl;
         std::vector<std::string> filteredPosts;
     if (command == "REQFLTRD"){
         for (const auto& post : posts)
@@ -118,7 +116,7 @@ void handleRequestFilter(SOCKET clientSocket, const std::string& request)
         for (const auto& post : filteredPosts) {
             response += "|POST|" + post;
         }
-
+        std::cout << "response:" << response << std::endl;
         // Send the response back to the client
         send(clientSocket, response.c_str(), response.size(), 0);
     }
@@ -168,12 +166,13 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    while (true) {
-        if ((new_socket = accept(server_fd, (struct sockaddr*)&client, &addrlen)) == INVALID_SOCKET) {
-            std::cerr << "Accept failed" << std::endl;
-            exit(EXIT_FAILURE);
-        }
+    if ((new_socket = accept(server_fd, (struct sockaddr *)&client, &addrlen)) == INVALID_SOCKET)
+    {
+        std::cerr << "Accept failed" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
+    while (true) {
         recv(new_socket, buffer, sizeof(buffer), 0);
 
         if (strncmp(buffer, "|POST|", 6) == 0) {
@@ -206,23 +205,19 @@ int main() {
                 std::cout << "Invalid post format received: " << buffer << std::endl;
             }
         }
-
-
         else if (strncmp(buffer, "|LOGINREQ|", 10) == 0)
         {
             std::cout << "Login detected" << std::endl;
             handleLoginRequest(new_socket, buffer);
         }
-
         else if (strncmp(buffer, "|REQFLTRD|", 10) == 0)
         {
             std::cout << "Request Filtered Detected" << std::endl;
             handleRequestFilter(new_socket, buffer);
         }
-
-        closesocket(new_socket);
+        
     }
-
+    closesocket(new_socket);
     WSACleanup();
     return 0;
 }

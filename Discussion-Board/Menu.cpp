@@ -136,7 +136,6 @@ std::vector<std::string> MainMenu::receivePosts(std::string author, std::string 
     // Send get posts request
     std::string request = "|REQFLTRD|" + author + "|" + topic;
     sendMessage(request);
-
     std::cout << request << std::endl;
     // Receive posts
     std::string message = receiveMessage();
