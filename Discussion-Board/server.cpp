@@ -143,6 +143,50 @@ void handleRequestFilter(SOCKET clientSocket, const std::string& request)
         // Send an appropriate response indicating an invalid command, if needed
     }
 }
+
+void processBuffer(const std::string &buffer)
+{
+    size_t start = 0;
+
+    while ((start = buffer.find("|POST|", start)) != std::string::npos)
+    {
+        start += 6; // Skip past "|POST|"
+        size_t end = buffer.find("|POST|", start);
+
+        std::string postStr = (end == std::string::npos) ? buffer.substr(start) : buffer.substr(start, end - start);
+
+        std::istringstream iss(postStr);
+        std::string token;
+        std::vector<std::string> tokens;
+
+        while (std::getline(iss, token, '|'))
+        {
+            tokens.push_back(token);
+        }
+
+        if (tokens.size() >= 3)
+        {
+            std::string author = tokens[0];
+            std::string topic = tokens[1];
+            std::string content = tokens[2];
+
+            posts.push_back({author, topic, content});
+            std::cout << "Received post: Author: " << author << ", Topic: " << topic << ", Content: " << content << std::endl;
+        }
+        else
+        {
+            std::cout << "Invalid post format received in segment: " << postStr << std::endl;
+        }
+
+        if (end == std::string::npos)
+            break;
+        start = end;
+    }
+
+    savePostsToFile(); // Save the updated posts to file after processing all posts
+    posts.clear();     // Clear the posts vector after saving to file
+}
+
 int main() {
     WSADATA wsa;
     SOCKET server_fd, new_socket;
@@ -150,8 +194,6 @@ int main() {
     int opt = 1;
     int addrlen = sizeof(client);
     char buffer[1024] = { 0 };
-
-    loadPostsFromFile();
 
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
         std::cerr << "WSAStartup failed" << std::endl;
@@ -189,37 +231,13 @@ int main() {
     }
 
     while (true) {
+        loadPostsFromFile();
         recv(new_socket, buffer, sizeof(buffer), 0);
 
-        if (strncmp(buffer, "|POST|", 6) == 0) {
+        if (strncmp(buffer, "|POST|", 6) == 0)
+        {
             std::cout << "Post detected" << std::endl;
-            // Parse the received post and add it to the posts vector
-            // Format: POST <Author>:<Topic>:<Content>
-
-            std::string postStr = buffer + 6; // Skipping "|POST|"
-
-            std::istringstream iss(postStr);
-            std::string token;
-            std::vector<std::string> tokens;
-
-            while (std::getline(iss, token, '|'))
-            {
-                tokens.push_back(token);
-            }
-
-            if (tokens.size() >= 3)
-            {
-                std::string author = tokens[0];
-                std::string topic = tokens[1];
-                std::string content = tokens[2];
-
-                posts.push_back({ author, topic, content });
-                savePostsToFile(); // Save the updated posts to file
-                std::cout << "Received post: " << buffer << std::endl;
-            }
-            else {
-                std::cout << "Invalid post format received: " << buffer << std::endl;
-            }
+            processBuffer(buffer);
         }
         else if (strncmp(buffer, "|LOGINREQ|", 10) == 0)
         {
